@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 using IpGeoInformer.Helpers;
+using IpGeoInformer.Models;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace IpGeoInformer
+namespace IpGeoInformer.Services
 {
     public class GeoIpDataProvider : IGeoIpSearcher
     {
@@ -26,19 +27,33 @@ namespace IpGeoInformer
         private Header Header => _header ??= _memoryCache.Get<Header>(GeoIpConsts.HeaderKey);
         private byte[] Indexes => _indexes ??= _memoryCache.Get<byte[]>(GeoIpConsts.IndexesKey);
 
-        public Place SearchPlaceByIp(string ip)
+        public PlaceDto SearchPlaceByIp(string ip)
         {
             var intIp = ToUInt(ip);
             var (interval, _) = BinarySearch(Intervals, intIp, new IpIntervalsComparer());
             var place = GetPlaceByIndex((int) interval.LocationIndex);
-            return place;
+            return ToPlaceDto(place);
         }
 
-        public Place[] SearchPlacesByCity(string city)
+        private static PlaceDto ToPlaceDto(Place place)
+        {
+            return new PlaceDto
+            {
+                Country = place.Country,
+                City = place.City,
+                Latitude = place.Latitude,
+                Longitude = place.Longitude,
+                Organization = place.Organization,
+                Postal = place.Postal,
+                Region = place.Region
+            };
+        }
+
+        public PlaceDto[] SearchPlacesByCity(string city)
         {
             var (place, index) = BinarySearchByIndex(city);
             if (index == null)
-                return new Place[0];
+                return new PlaceDto[0];
             var res = new List<Place> {place};
 
             var i = index.Value - 1;
@@ -71,7 +86,8 @@ namespace IpGeoInformer
 
                 ++i;
             }
-            return res.ToArray();
+
+            return res.Select(ToPlaceDto).ToArray();
         }
 
         public IpInterval[] GetAllIntervals()
@@ -94,7 +110,7 @@ namespace IpGeoInformer
             var places = new Place[Header.Records];
             for (var i = 0; i < Header.Records; i++)
             {
-                places[i] = Places.ToStruct<Place>(i * 96);
+                places[i] = Places.ToStruct<Place>(i * GeoIpConsts.PlaceSize);
             }
 
             return places;
@@ -124,7 +140,7 @@ namespace IpGeoInformer
                 (int) IPAddress.Parse(addr).Address);
         }
 
-        private static (T, int) BinarySearch<TKey, T>(byte[] inputArray, TKey key,
+        private static (T, int?) BinarySearch<TKey, T>(byte[] inputArray, TKey key,
             IShinyComparer<TKey, T> comparator)
         {
             var size = Marshal.SizeOf<T>();
@@ -150,7 +166,7 @@ namespace IpGeoInformer
                 }
             }
 
-            return default;
+            return (default, null);
         }
         
         private (Place, int?) BinarySearchByIndex(string key)

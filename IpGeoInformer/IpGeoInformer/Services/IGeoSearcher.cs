@@ -1,8 +1,10 @@
-﻿namespace IpGeoInformer
+﻿using IpGeoInformer.Models;
+
+namespace IpGeoInformer.Services
 {
     public interface IGeoIpSearcher
     {
-        Place SearchPlaceByIp(string ip);
-        Place[] SearchPlacesByCity(string city);
+        PlaceDto SearchPlaceByIp(string ip);
+        PlaceDto[] SearchPlacesByCity(string city);
     }
 }

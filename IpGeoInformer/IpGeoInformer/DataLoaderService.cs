@@ -24,7 +24,7 @@ namespace IpGeoInformer
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            const string filePath = "geobase.dat";
+            var filePath = @"C:\emm\metatraderstest\IpGeoInformer\IpGeoInformer.Tests\geobase.dat";
             using var scope = _services.CreateScope();
             var dataLoader = scope.ServiceProvider.GetRequiredService<GeoIpDataLoader>();
             var stopwatch = new Stopwatch();

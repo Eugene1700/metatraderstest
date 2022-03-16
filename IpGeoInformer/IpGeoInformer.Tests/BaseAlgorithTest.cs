@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using IpGeoInformer.Models;
 using IpGeoInformer.Services;
 using NUnit.Framework;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,7 +14,8 @@ namespace IpGeoInformer.Tests
         [SetUp]
         public void Setup()
         {
-            const string filePath = "geobase.dat";
+            // const string filePath = "geobase.dat";
+            var filePath = @"C:\emm\metatraderstest\IpGeoInformer\IpGeoInformer.Tests\geobase.dat";
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
             var dataLoader = new GeoIpDataLoader(memoryCache);
             var stopwatch = new Stopwatch();
@@ -33,6 +35,7 @@ namespace IpGeoInformer.Tests
             stopwatch.Start();
             var place = _dataProvider.SearchPlaceByIp(ip);
             stopwatch.Stop();
+            Assert.That(place, Is.Not.Null);
             Assert.That(place.Latitude, Is.EqualTo(expectedLatitude));
             Assert.That(place.Longitude, Is.EqualTo(expectedLongitude));
             var stopwatchElapsed = stopwatch.Elapsed;
@@ -46,7 +49,7 @@ namespace IpGeoInformer.Tests
                 "cit_Ageqenat",
                 new[]
                 {
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_YZU",
@@ -56,7 +59,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -2.26679993f,
                         Longitude = -84.1287994f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_YKY",
@@ -66,7 +69,7 @@ namespace IpGeoInformer.Tests
                         Latitude = 120.204002f,
                         Longitude = -46.2088013f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_YFO",
@@ -76,7 +79,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -44.6515007f,
                         Longitude = -161.159302f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_ED",
@@ -86,7 +89,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -131.467499f,
                         Longitude = -14.9900999f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_OPA",
@@ -96,7 +99,7 @@ namespace IpGeoInformer.Tests
                         Latitude = 82.2771988f,
                         Longitude = 39.4485016f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_AT",
@@ -106,7 +109,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -158.169006f,
                         Longitude = -176.281998f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_YS",
@@ -116,7 +119,7 @@ namespace IpGeoInformer.Tests
                         Latitude = 55.7402f,
                         Longitude = -85.0997009f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_UJ",
@@ -126,7 +129,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -47.9598007f,
                         Longitude = -39.5966988f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_EHU",
@@ -136,7 +139,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -34.4183006f,
                         Longitude = -150.490005f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_OW",
@@ -146,7 +149,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -3.2197001f,
                         Longitude = 23.6578999f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_UJ",
@@ -156,7 +159,7 @@ namespace IpGeoInformer.Tests
                         Latitude = 140.798004f,
                         Longitude = 45.6664009f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ageqenat",
                         Country = "cou_EKU",
@@ -173,7 +176,7 @@ namespace IpGeoInformer.Tests
                 "cit_Ahijinus L",
                 new[]
                 {
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_YWU",
@@ -183,7 +186,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -178.006195f,
                         Longitude = 95.6173019f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_ED",
@@ -193,7 +196,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -62.8851013f,
                         Longitude = -115.757599f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_YFO",
@@ -202,7 +205,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Oxuz",
                         Latitude = -141.423492f,
                         Longitude = 139.398804f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_ESI",
@@ -211,7 +214,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Obe",
                         Latitude = 80.5463028f,
                         Longitude = -76.2074966f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_IN",
@@ -220,7 +223,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Oli ",
                         Latitude = -50.9779015f,
                         Longitude = 111.331299f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_OX",
@@ -229,7 +232,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Ydozuv",
                         Latitude = -0.408199996f,
                         Longitude = 163.548706f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Ahijinus L",
                         Country = "cou_IN",
@@ -246,7 +249,7 @@ namespace IpGeoInformer.Tests
                 "cit_Oze Ej Xa",
                 new[]
                 {
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_AJ",
@@ -255,7 +258,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Uxehox",
                         Latitude = -127.191299f,
                         Longitude = 13.0410995f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_UQA",
@@ -264,7 +267,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Ypomi",
                         Latitude = 121.774399f,
                         Longitude = -48.2400017f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_YP",
@@ -273,7 +276,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Ydozuv",
                         Latitude = 148.173904f,
                         Longitude = 66.7257996f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_IZ",
@@ -283,7 +286,7 @@ namespace IpGeoInformer.Tests
                         Latitude = -58.7980003f,
                         Longitude = -39.9604988f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_AF",
@@ -292,7 +295,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_A",
                         Latitude = 81.2216034f,
                         Longitude = 82.9225998f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_OX",
@@ -301,7 +304,7 @@ namespace IpGeoInformer.Tests
                         Region = "reg_Y",
                         Latitude = -128.725906f,
                         Longitude = 150.161606f
-                    },new Place
+                    },new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_ACO",
@@ -311,7 +314,7 @@ namespace IpGeoInformer.Tests
                         Latitude = 131.320007f,
                         Longitude = 15.7718f
                     },
-                    new Place
+                    new PlaceDto
                     {
                         City = "cit_Oze Ej Xa",
                         Country = "cou_IFY",
@@ -326,7 +329,7 @@ namespace IpGeoInformer.Tests
         };
 
         [TestCaseSource(nameof(SourcePlaces))]
-        public void PlacesSearch(string city, Place[] expPlaces)
+        public void PlacesSearch(string city, PlaceDto[] expPlaces)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
