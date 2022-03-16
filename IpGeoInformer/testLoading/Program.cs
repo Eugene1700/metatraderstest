@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using IpGeoInformer;
+using IpGeoInformer.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace testLoading
 {
@@ -16,19 +13,29 @@ namespace testLoading
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             const string filePath = "geobase.dat";
-            var db = DataBase.Load(filePath);
+            var memoryCache = new MemoryCache(new MemoryCacheOptions());
+            var dataLoader = new GeoIpDataLoader(memoryCache);
+            dataLoader.Load(filePath);
             stopwatch.Stop();
             var stopwatchElapsed = stopwatch.Elapsed;
             Console.WriteLine($"loadTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
             
-            var ip1 = DataBase.UInt32ToIpAddress(151738);
-            var ip2 = DataBase.UInt32ToIpAddress(457815);
+            var ip1 = GeoIpDataProvider.UInt32ToIpAddress(151738);
+            var ip2 = GeoIpDataProvider.UInt32ToIpAddress(457815);
             
+            var db = new GeoIpDataProvider(memoryCache);
             stopwatch.Start();
             var r = db.SearchPlaceByIp(ip1.ToString());
             stopwatch.Stop();
             stopwatchElapsed = stopwatch.Elapsed;
             Console.WriteLine($"res={r.Longitude}, {r.Latitude} searchtime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
+            
+            stopwatch.Start();
+            var rRep = db.SearchPlaceByIp(ip1.ToString());
+            stopwatch.Stop();
+            stopwatchElapsed = stopwatch.Elapsed;
+            Console.WriteLine($"resrRep={rRep.Longitude}, {rRep.Latitude} searchtime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
+
             
             stopwatch.Start();
             var r2 = db.SearchPlaceByIp(ip2.ToString());
