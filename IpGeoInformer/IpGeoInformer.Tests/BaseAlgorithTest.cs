@@ -341,7 +341,7 @@ namespace IpGeoInformer.Tests
             stopwatch.Start();
             var places = _dataProvider.SearchPlacesByCity(city);
             stopwatch.Stop();
-            Assert.That(places.Select(JsonConvert.SerializeObject), Is.EquivalentTo(expPlaces));
+            Assert.That(places.Select(JsonConvert.SerializeObject), Is.EquivalentTo(expPlaces.Select(JsonConvert.SerializeObject)));
             var stopwatchElapsed = stopwatch.Elapsed;
             Console.WriteLine($"search time={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
         }
