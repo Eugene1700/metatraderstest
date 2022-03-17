@@ -1,9 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using IpGeoInformer.Models;
 using IpGeoInformer.Services;
 using NUnit.Framework;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Moq;
+using Newtonsoft.Json;
 
 namespace IpGeoInformer.Tests
 {
@@ -24,10 +28,12 @@ namespace IpGeoInformer.Tests
             stopwatch.Stop();
             var stopwatchElapsed = stopwatch.Elapsed;
             Console.WriteLine($"loadTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
-            _dataProvider = new GeoIpDataProvider(memoryCache);
+            var logger = Mock.Of<ILogger<GeoIpDataProvider>>();
+            _dataProvider = new GeoIpDataProvider(memoryCache, logger);
         }
 
         [TestCase("0.2.80.186", 18.2742004f, 91.9888f)]
+        [TestCase("0.2.137.186", 18.2742004f, 91.9888f)]
         [TestCase("0.6.252.87", -169.201294f, -137.628693f)]
         public void IpSearch(string ip, float expectedLatitude, float expectedLongitude)
         {
@@ -335,7 +341,7 @@ namespace IpGeoInformer.Tests
             stopwatch.Start();
             var places = _dataProvider.SearchPlacesByCity(city);
             stopwatch.Stop();
-            Assert.That(places, Is.EquivalentTo(expPlaces));
+            Assert.That(places.Select(JsonConvert.SerializeObject), Is.EquivalentTo(expPlaces));
             var stopwatchElapsed = stopwatch.Elapsed;
             Console.WriteLine($"search time={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
         }

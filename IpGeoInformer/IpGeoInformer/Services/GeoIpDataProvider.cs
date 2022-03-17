@@ -7,19 +7,23 @@ using System.Runtime.InteropServices;
 using IpGeoInformer.Helpers;
 using IpGeoInformer.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace IpGeoInformer.Services
 {
     public class GeoIpDataProvider : IGeoIpSearcher
     {
         private readonly IMemoryCache _memoryCache;
+        private readonly ILogger<GeoIpDataProvider> _logger;
         private byte[] _intervals;
         private byte[] _places;
         private Header? _header;
         private byte[] _indexes;
-        public GeoIpDataProvider(IMemoryCache memoryCache)
+
+        public GeoIpDataProvider(IMemoryCache memoryCache, ILogger<GeoIpDataProvider> logger)
         {
             _memoryCache = memoryCache;
+            _logger = logger;
         }
 
         private byte[] Intervals => _intervals ??= _memoryCache.Get<byte[]>(GeoIpConsts.IntervalsKey);
@@ -29,10 +33,12 @@ namespace IpGeoInformer.Services
 
         public PlaceDto SearchPlaceByIp(string ip)
         {
-            var intIp = ToUInt(ip);
+            var intIp = StrIpToUInt(ip);
             var (interval, index) = BinarySearch(Intervals, intIp, new IpIntervalsComparer());
             if (index == null)
                 return null;
+            _logger.LogInformation(
+                $"IpFrom = [{UInt32ToIpAddress(interval.IpFrom)}] IpTo = [{UInt32ToIpAddress(interval.IpTo)}]");
             var place = GetPlaceByIndex((int) interval.LocationIndex);
             return ToPlaceDto(place);
         }
@@ -73,6 +79,7 @@ namespace IpGeoInformer.Services
 
                 --i;
             }
+
             i = index.Value + 1;
             while (true)
             {
@@ -128,7 +135,7 @@ namespace IpGeoInformer.Services
                 (byte) (address & 0xFF)
             });
         }
-        
+
         private Place GetPlaceByIndex(int index)
         {
             var locationIndex = Indexes.ToStruct<int>(index * GeoIpConsts.IndexSize);
@@ -136,10 +143,10 @@ namespace IpGeoInformer.Services
             return place;
         }
 
-        private static uint ToUInt(string addr)
+        private static uint StrIpToUInt(string ipAddress)
         {
             return (uint) IPAddress.NetworkToHostOrder(
-                (int) IPAddress.Parse(addr).Address);
+                (int) BitConverter.ToUInt32(IPAddress.Parse(ipAddress).GetAddressBytes(), 0));
         }
 
         private static (T, int?) BinarySearch<TKey, T>(byte[] inputArray, TKey key,
@@ -170,7 +177,7 @@ namespace IpGeoInformer.Services
 
             return (default, null);
         }
-        
+
         private (Place, int?) BinarySearchByIndex(string key)
         {
             var min = 0;
