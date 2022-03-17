@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace IpGeoInformer.Models
+namespace IpGeoInformer.Domain
 {
     [StructLayout(LayoutKind.Sequential, Size = 96, Pack = 1)]
     public struct Place

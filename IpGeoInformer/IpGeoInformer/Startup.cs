@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NSwag;
 
 namespace IpGeoInformer
 {
@@ -21,8 +22,13 @@ namespace IpGeoInformer
             services.AddControllers();
             services.AddMemoryCache();
             services.AddScoped<GeoIpDataLoader>();
-            services.AddScoped<IGeoIpSearcher, GeoIpDataProvider>();
+            services.AddScoped<IGeoIpSearcher, GeoIpDataSearcher>();
             services.AddHostedService<DataLoaderService>();
+            
+            services.AddOpenApiDocument(settings =>
+            {
+                settings.Title = "IpGeoInformer";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,6 +40,16 @@ namespace IpGeoInformer
             }
 
             app.UseRouting();
+            
+            app.UseSwaggerUi3();
+            app.UseOpenApi(configure =>
+            {
+                configure.PostProcess = (document, _) => document.Schemes = new[]
+                {
+                    OpenApiSchema.Https,
+                    OpenApiSchema.Http
+                };
+            });
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

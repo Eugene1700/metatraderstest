@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using IpGeoInformer.Models;
+using IpGeoInformer.Domain;
 using IpGeoInformer.Services;
 using NUnit.Framework;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,7 +13,7 @@ namespace IpGeoInformer.Tests
 {
     public class Tests
     {
-        private GeoIpDataProvider _dataProvider;
+        private GeoIpDataSearcher _dataSearcher;
 
         [SetUp]
         public void Setup()
@@ -28,8 +28,8 @@ namespace IpGeoInformer.Tests
             stopwatch.Stop();
             var stopwatchElapsed = stopwatch.Elapsed;
             Console.WriteLine($"loadTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
-            var logger = Mock.Of<ILogger<GeoIpDataProvider>>();
-            _dataProvider = new GeoIpDataProvider(memoryCache, logger);
+            var logger = Mock.Of<ILogger<GeoIpDataSearcher>>();
+            _dataSearcher = new GeoIpDataSearcher(memoryCache, logger);
         }
 
         [TestCase("0.2.80.186", 18.2742004f, 91.9888f)]
@@ -39,7 +39,7 @@ namespace IpGeoInformer.Tests
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var place = _dataProvider.SearchPlaceByIp(ip);
+            var place = _dataSearcher.SearchPlaceByIp(ip);
             stopwatch.Stop();
             Assert.That(place, Is.Not.Null);
             Assert.That(place.Latitude, Is.EqualTo(expectedLatitude));
@@ -339,7 +339,7 @@ namespace IpGeoInformer.Tests
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var places = _dataProvider.SearchPlacesByCity(city);
+            var places = _dataSearcher.SearchPlacesByCity(city);
             stopwatch.Stop();
             Assert.That(places.Select(JsonConvert.SerializeObject), Is.EquivalentTo(expPlaces.Select(JsonConvert.SerializeObject)));
             var stopwatchElapsed = stopwatch.Elapsed;

@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using IpGeoInformer.Models;
+using IpGeoInformer.Domain;
 
 namespace IpGeoInformer.Helpers
 {

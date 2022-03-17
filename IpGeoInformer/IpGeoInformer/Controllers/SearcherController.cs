@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using IpGeoInformer.Domain;
 using IpGeoInformer.Models;
 using IpGeoInformer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -20,13 +21,6 @@ namespace IpGeoInformer.Controllers
             _logger = logger;
         }
 
-        [Route("ping")]
-        [AllowAnonymous]
-        public string Ping()
-        {
-            return "Hello";
-        }
-        
         [HttpGet]
         [Route("ip/location")]
         public Coordinates GetLocation([FromQuery] string ip)
@@ -58,11 +52,5 @@ namespace IpGeoInformer.Controllers
             _logger.LogInformation($"searchTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
             return res;
         }
-    }
-
-    public class Coordinates
-    {
-        public float Latitude { get; set; }
-        public float Longitude { get; set; }
     }
 }

@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
+using IpGeoInformer.Domain;
 using IpGeoInformer.Helpers;
-using IpGeoInformer.Models;
+using IpGeoInformer.Services.Comparers;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace IpGeoInformer.Services
 {
-    public class GeoIpDataProvider : IGeoIpSearcher
+    public class GeoIpDataSearcher : IGeoIpSearcher
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly ILogger<GeoIpDataProvider> _logger;
+        private readonly ILogger<GeoIpDataSearcher> _logger;
         private byte[] _intervals;
         private byte[] _places;
         private Header? _header;
         private byte[] _indexes;
 
-        public GeoIpDataProvider(IMemoryCache memoryCache, ILogger<GeoIpDataProvider> logger)
+        public GeoIpDataSearcher(IMemoryCache memoryCache, ILogger<GeoIpDataSearcher> logger)
         {
             _memoryCache = memoryCache;
             _logger = logger;
@@ -34,11 +34,15 @@ namespace IpGeoInformer.Services
         public PlaceDto SearchPlaceByIp(string ip)
         {
             var intIp = StrIpToUInt(ip);
-            var (interval, index) = BinarySearch(Intervals, intIp, new IpIntervalsComparer());
-            if (index == null)
+            IpInterval ToStruct(int mid) => Intervals.ToStruct<IpInterval>(mid * GeoIpConsts.IntervalsSize);
+            var result = Intervals.BinarySearch(intIp, GeoIpConsts.IntervalsSize, ToStruct,
+                new IpIntervalsComparer());
+            if (result == null)
                 return null;
-            _logger.LogInformation(
-                $"IpFrom = [{UInt32ToIpAddress(interval.IpFrom)}] IpTo = [{UInt32ToIpAddress(interval.IpTo)}]");
+            var (interval, _) = result;
+            //todo удалить
+            // _logger.LogInformation(
+            //     $"IpFrom = [{UInt32ToIpAddress(interval.IpFrom)}] IpTo = [{UInt32ToIpAddress(interval.IpTo)}]");
             var place = GetPlaceByIndex((int) interval.LocationIndex);
             return ToPlaceDto(place);
         }
@@ -59,12 +63,15 @@ namespace IpGeoInformer.Services
 
         public PlaceDto[] SearchPlacesByCity(string city)
         {
-            var (place, index) = BinarySearchByIndex(city);
-            if (index == null)
+            Place ToStruct(int mid) => GetPlaceByIndex(mid);
+            var searchResult = Indexes.BinarySearch(city, GeoIpConsts.IndexSize, 
+                ToStruct, new CityComparer());
+            if (searchResult == null)
                 return new PlaceDto[0];
+            var (place, index) = searchResult;
             var res = new List<Place> {place};
 
-            var i = index.Value - 1;
+            var i = index - 1;
             while (true)
             {
                 var s = GetPlaceByIndex(i);
@@ -80,7 +87,7 @@ namespace IpGeoInformer.Services
                 --i;
             }
 
-            i = index.Value + 1;
+            i = index + 1;
             while (true)
             {
                 var s = GetPlaceByIndex(i);
@@ -124,18 +131,7 @@ namespace IpGeoInformer.Services
 
             return places;
         }
-
-        public static IPAddress UInt32ToIpAddress(UInt32 address)
-        {
-            return new IPAddress(new[]
-            {
-                (byte) ((address >> 24) & 0xFF),
-                (byte) ((address >> 16) & 0xFF),
-                (byte) ((address >> 8) & 0xFF),
-                (byte) (address & 0xFF)
-            });
-        }
-
+        
         private Place GetPlaceByIndex(int index)
         {
             var locationIndex = Indexes.ToStruct<int>(index * GeoIpConsts.IndexSize);
@@ -147,62 +143,6 @@ namespace IpGeoInformer.Services
         {
             return (uint) IPAddress.NetworkToHostOrder(
                 (int) BitConverter.ToUInt32(IPAddress.Parse(ipAddress).GetAddressBytes(), 0));
-        }
-
-        private static (T, int?) BinarySearch<TKey, T>(byte[] inputArray, TKey key,
-            IShinyComparer<TKey, T> comparator)
-        {
-            var size = Marshal.SizeOf<T>();
-            var min = 0;
-            var max = inputArray.Length / size - 1;
-            while (min <= max)
-            {
-                var mid = (min + max) / 2;
-                var structInterval = inputArray.ToStruct<T>(mid * size);
-                var compRes = comparator.Compare(key, structInterval);
-                if (compRes == 0)
-                {
-                    return (structInterval, mid);
-                }
-
-                if (compRes < 0)
-                {
-                    max = mid - 1;
-                }
-                else
-                {
-                    min = mid + 1;
-                }
-            }
-
-            return (default, null);
-        }
-
-        private (Place, int?) BinarySearchByIndex(string key)
-        {
-            var min = 0;
-            var max = Indexes.Length / GeoIpConsts.IndexSize - 1;
-            while (min <= max)
-            {
-                var mid = (min + max) / 2;
-                var place = GetPlaceByIndex(mid);
-                var compRes = key.CompareTo(place.City);
-                if (compRes == 0)
-                {
-                    return (place, mid);
-                }
-
-                if (compRes < 0)
-                {
-                    max = mid - 1;
-                }
-                else
-                {
-                    min = mid + 1;
-                }
-            }
-
-            return (default, null);
         }
     }
 }

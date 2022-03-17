@@ -1,4 +1,4 @@
-﻿using IpGeoInformer.Models;
+﻿using IpGeoInformer.Domain;
 
 namespace IpGeoInformer.Services
 {
