@@ -30,7 +30,9 @@ namespace IpGeoInformer.Services
         public PlaceDto SearchPlaceByIp(string ip)
         {
             var intIp = ToUInt(ip);
-            var (interval, _) = BinarySearch(Intervals, intIp, new IpIntervalsComparer());
+            var (interval, index) = BinarySearch(Intervals, intIp, new IpIntervalsComparer());
+            if (index == null)
+                return null;
             var place = GetPlaceByIndex((int) interval.LocationIndex);
             return ToPlaceDto(place);
         }
@@ -172,7 +174,7 @@ namespace IpGeoInformer.Services
         private (Place, int?) BinarySearchByIndex(string key)
         {
             var min = 0;
-            var max = Indexes.Length / 4 - 1;
+            var max = Indexes.Length / GeoIpConsts.IndexSize - 1;
             while (min <= max)
             {
                 var mid = (min + max) / 2;

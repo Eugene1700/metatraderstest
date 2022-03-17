@@ -32,7 +32,7 @@ namespace IpGeoInformer
             dataLoader.Load(filePath);
             stopwatch.Stop();
             var stopwatchElapsed = stopwatch.Elapsed;
-            _logger.LogInformation($"loadTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
+            _logger.LogInformation($"dbloading time=[{Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms]");
             return Task.CompletedTask;
         }
 
