@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using IpGeoInformer.Domain;
+using IpGeoInformer.Domain.Model;
+using IpGeoInformer.Domain.Services;
+using IpGeoInformer.Helpers;
 using IpGeoInformer.Models;
 using IpGeoInformer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +31,8 @@ namespace IpGeoInformer.Controllers
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var place = _geoIpSearcher.SearchPlaceByIp(ip);
+            var uintIp = ip.StrIpToUInt();
+            var place = _geoIpSearcher.SearchPlaceByIp(uintIp);
             stopwatch.Stop();
             var stopwatchElapsed = stopwatch.Elapsed;
             _logger.LogInformation($"searchTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
@@ -42,7 +47,7 @@ namespace IpGeoInformer.Controllers
         
         [HttpGet]
         [Route("city/locations")]
-        public PlaceDto[] GetLocations([FromQuery] string city)
+        public Place[] GetLocations([FromQuery] string city)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();

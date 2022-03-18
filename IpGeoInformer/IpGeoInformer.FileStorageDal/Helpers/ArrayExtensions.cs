@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using IpGeoInformer.Services;
 using IpGeoInformer.Services.Comparers;
 
-namespace IpGeoInformer.Helpers
+namespace IpGeoInformer.FileStorageDal.Helpers
 {
     public static class ArrayExtensions
     {
-        public static T ToStruct<T>( this byte[] inputArray, int index)
+        public static T ToStruct<T>(this byte[] inputArray, int index) where T : struct
         {
             var size = Marshal.SizeOf<T>();
-            var sub = SubArray(inputArray, index, size);
-            var structInterval = ByteArrayToStruct<T>(sub);
-            return structInterval;
+            var subArray = inputArray.SubArray(index, size);
+            var @struct = subArray.ByteArrayToStruct<T>();
+            return @struct;
         }
 
-        public static SearchResult<TSearchStruct> BinarySearch<TSearchKey, TSearchStruct>(this byte[] inputArray, 
+        public static SearchResult<TSearchStruct> BinarySearch<TSearchKey, TSearchStruct>(this byte[] inputArray,
             TSearchKey key,
             int itemSize,
             Func<int, TSearchStruct> toStruct,
-            IShinyComparer<TSearchKey, TSearchStruct> comparator)
+            IShinyComparer<TSearchKey, TSearchStruct> comparator) where TSearchStruct : struct
         {
             var min = 0;
             var max = inputArray.Length / itemSize - 1;
@@ -49,14 +48,14 @@ namespace IpGeoInformer.Helpers
 
             return null;
         }
-        
+
         private static T[] SubArray<T>(this T[] array, int offset, int length)
         {
             return new ArraySegment<T>(array, offset, length)
                 .ToArray();
         }
-        
-        private static T ByteArrayToStruct<T>(byte[] bytes)
+
+        private static T ByteArrayToStruct<T>(this byte[] bytes)
         {
             var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
             try
@@ -75,7 +74,7 @@ namespace IpGeoInformer.Helpers
     {
         public T Result { get; set; }
         public int Index { get; set; }
-        
+
         public void Deconstruct(out T result, out int index)
         {
             result = Result;

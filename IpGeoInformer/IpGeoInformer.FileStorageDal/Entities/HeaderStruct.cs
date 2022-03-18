@@ -1,29 +1,29 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace IpGeoInformer.Domain
+namespace IpGeoInformer.FileStorageDal.Entities
 {
     [StructLayout(LayoutKind.Sequential, Size = 60, Pack = 1)]
-    public struct Header
+    public readonly struct HeaderStruct
     {
         [MarshalAs(UnmanagedType.I4)]
-        public int Version;
+        public readonly int Version;
         
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] 
-        public string Name;
+        public readonly string Name;
         
         [MarshalAs(UnmanagedType.U8)]
-        public ulong TimeStamp;
+        public readonly ulong TimeStamp;
         
         [MarshalAs(UnmanagedType.I4)]
-        public int Records;
+        public readonly int Records;
         
         [MarshalAs(UnmanagedType.U4)]
-        public uint OffsetRanges;
+        public readonly uint OffsetRanges;
         
         [MarshalAs(UnmanagedType.U4)]
-        public uint OffsetCities;
+        public readonly uint OffsetCities;
         
         [MarshalAs(UnmanagedType.U4)]
-        public uint OffsetLocations;
+        public readonly uint OffsetLocations;
     }
 }

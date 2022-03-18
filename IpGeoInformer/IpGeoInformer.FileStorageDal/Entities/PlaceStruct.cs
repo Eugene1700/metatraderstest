@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace IpGeoInformer.Domain
+namespace IpGeoInformer.FileStorageDal.Entities
 {
     [StructLayout(LayoutKind.Sequential, Size = 96, Pack = 1)]
-    public struct Place
+    public readonly struct PlaceStruct
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)] 
         public readonly string Country;

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using IpGeoInformer.Services;
+using IpGeoInformer.Domain.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +29,7 @@ namespace IpGeoInformer
         {
             var filePath = _configuration["database"];
             using var scope = _services.CreateScope();
-            var dataLoader = scope.ServiceProvider.GetRequiredService<GeoIpDataLoader>();
+            var dataLoader = scope.ServiceProvider.GetRequiredService<IGeoIpDataLoader>();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             dataLoader.Load(filePath);

@@ -1,6 +1,6 @@
-﻿namespace IpGeoInformer.Domain
+﻿namespace IpGeoInformer.Domain.Model
 {
-    public class PlaceDto
+    public class Place
     {
         public string Country { get; set; }
         public string Region { get; set; }

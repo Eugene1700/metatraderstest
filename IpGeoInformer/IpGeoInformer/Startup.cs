@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IpGeoInformer.FileStorageDal;
 using IpGeoInformer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,8 +22,7 @@ namespace IpGeoInformer
             services.AddCors();
             services.AddControllers();
             services.AddMemoryCache();
-            services.AddScoped<GeoIpDataLoader>();
-            services.AddScoped<IGeoIpSearcher, GeoIpDataSearcher>();
+            services.AddServices();
             services.AddHostedService<DataLoaderService>();
             
             services.AddOpenApiDocument(settings =>

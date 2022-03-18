@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer", "IpGeoInfor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer.Tests", "IpGeoInformer.Tests\IpGeoInformer.Tests.csproj", "{CD8C3DBC-BE09-4E0D-81E7-D6789659D3C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer.Domain", "IpGeoInformer.Domain\IpGeoInformer.Domain.csproj", "{7745C78D-2B61-44F2-808E-D1A75DF49675}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer.FileStorageDal", "IpGeoInformer.FileStorageDal\IpGeoInformer.FileStorageDal.csproj", "{787AF668-328C-489D-8AAA-E6FC3A7EB06F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{CD8C3DBC-BE09-4E0D-81E7-D6789659D3C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD8C3DBC-BE09-4E0D-81E7-D6789659D3C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD8C3DBC-BE09-4E0D-81E7-D6789659D3C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7745C78D-2B61-44F2-808E-D1A75DF49675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7745C78D-2B61-44F2-808E-D1A75DF49675}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7745C78D-2B61-44F2-808E-D1A75DF49675}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7745C78D-2B61-44F2-808E-D1A75DF49675}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787AF668-328C-489D-8AAA-E6FC3A7EB06F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787AF668-328C-489D-8AAA-E6FC3A7EB06F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787AF668-328C-489D-8AAA-E6FC3A7EB06F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787AF668-328C-489D-8AAA-E6FC3A7EB06F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

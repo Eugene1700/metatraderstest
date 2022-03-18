@@ -1,17 +1,17 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace IpGeoInformer.Domain
+namespace IpGeoInformer.FileStorageDal.Entities
 {
     [StructLayout(LayoutKind.Sequential, Size = 12, Pack = 1)]
-    public struct IpInterval
+    public readonly struct IpIntervalStruct
     {
         [MarshalAs(UnmanagedType.U4)] 
-        public uint IpFrom;
+        public readonly uint IpFrom;
 
         [MarshalAs(UnmanagedType.U4)] 
-        public uint IpTo;
+        public readonly uint IpTo;
 
         [MarshalAs(UnmanagedType.U4)] 
-        public uint LocationIndex;
+        public readonly uint LocationIndex;
     }
 }
