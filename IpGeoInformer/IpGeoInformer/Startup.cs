@@ -37,10 +37,14 @@ namespace IpGeoInformer
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(builder =>
+                {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                });
             }
 
             app.UseRouting();
-            
             app.UseSwaggerUi3();
             app.UseOpenApi(configure =>
             {
