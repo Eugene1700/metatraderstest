@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="scripts/semantic-ui-css/semantic.min.css">
-  <link rel="stylesheet" href="scripts/semantic-ui-calendar/dist/calendar.min.css">
+  <link rel="stylesheet" href="/css/index.css">
   <title>GEO.IP</title>
 </head>
 <body>
-  <div class="ui container">
+  <div>
     <!-- Navigation Menu -->
-    <div class="ui four item inverted orange menu">
-      <div class="header item">
+    <nav class="nav">
+      <div class="header">
         GEO.IP
       </div>
-      <a class="item" href="/">
+      <a class="nav__link" href="/">
         Поиск по IP
       </a>
-      <a class="item" href="/city">
+      <a class="nav__link" href="/city">
         Поиск по городу
       </a>
-    </div>
+    </nav>
     <!-- Error Template -->
     <script id="error-template" type="text/x-handlebars-template">
       <div class="ui {{color}} inverted segment" style="height:250px;">
@@ -71,7 +71,7 @@
     <script id="ip-template" type="text/x-handlebars-template">
       <h1 class="ui header">Поиск гео-позиции по IP</h1>
       <hr>
-      <div class="ui basic loading segment">
+      <div class="ui basic segment">
         <form class="ui form">
           <div class="three fields">
             <div class="field">
@@ -79,7 +79,7 @@
               <input type="text" name="ip" id="ip" placeholder="Введите ip-адрес">
             </div>
           </div>
-          <div class="ui primary submit button">Найти</div>
+          <div class="ui primary submit button">Искать</div>
           <div class="ui error message"></div>
         </form>
         <br>
@@ -100,7 +100,7 @@
               <input type="text" name="city" id="city" placeholder="Введите название города">
             </div>
           </div>
-          <div class="ui primary submit button">Найти</div>
+          <div class="ui primary submit button">Искать</div>
           <div class="ui error message"></div>
         </form>
         <br>
@@ -118,7 +118,6 @@
     <!-- Scripts -->
     <script src="scripts/jquery/dist/jquery.min.js"></script>
     <script src="scripts/semantic-ui-css/semantic.min.js"></script>
-    <script src="scripts/semantic-ui-calendar/dist/calendar.min.js"></script>
     <script src="scripts/axios/dist/axios.min.js"></script>
     <script src="scripts/handlebars/dist/handlebars.min.js"></script>
     <script src="scripts/vanilla-router/dist/vanilla-router.min.js"></script>
