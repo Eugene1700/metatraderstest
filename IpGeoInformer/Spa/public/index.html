@@ -38,8 +38,8 @@
 
     <script id="location-template" type="text/x-handlebars-template">
       <hr>
-      <div class="ui basic segment">
-        <table class="ui celled striped selectable inverted table">
+      <div class="container">
+        <table class="tbl-location">
           <thead>
           <tr>
             <th>Страна</th>
@@ -73,14 +73,14 @@
       <hr>
       <div class="ui basic segment">
         <form class="ui form">
-          <div class="three fields">
             <div class="field">
               <label>IP-адрес</label>
-              <input type="text" name="ip" id="ip" placeholder="Введите ip-адрес">
+              <div class="form-container">
+                <input type="text" class="text-field" name="ip" id="ip" placeholder="Введите ip-адрес">
+                <div class="submit button-my">Искать</div>
+              </div>
             </div>
-          </div>
-          <div class="ui primary submit button">Искать</div>
-          <div class="ui error message"></div>
+<!--          <div class="ui error message"></div>-->
         </form>
         <br>
         <div id="result-segment" class="ui center aligned segment">
@@ -100,14 +100,12 @@
               <input type="text" name="city" id="city" placeholder="Введите название города">
             </div>
           </div>
-          <div class="ui primary submit button">Искать</div>
+          <div class="submit button-my">Искать</div>
           <div class="ui error message"></div>
         </form>
         <br>
         <div id="result-segment" class="ui center aligned segment">
-          <h2 id="result" class="ui header">
-            -
-          </h2>
+          <div id="result" class="ui header"/>
         </div>
       </div>
     </script>

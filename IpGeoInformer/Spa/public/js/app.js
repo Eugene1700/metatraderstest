@@ -58,15 +58,24 @@ window.addEventListener('load', () => {
     }
   };
 
+  function validateIpAddress(ipaddress)
+  {
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress))
+    {
+      return true;
+    }
+    return false;
+  }
+
   const getGeoByIpHandler = () => {
-    if ($('.ui.form').form('is valid')) {
-      // hide error message
-      $('.ui.error.message').hide();
-      // Post to express server
+    const ip = $('#ip').val();
+    if (validateIpAddress(ip)) {
       $('#result-segment').addClass('loading');
       getGeoIpResults();
-      // Prevent page from submitting to server
       return false;
+    }
+    else {
+      alert('incorrect ip');
     }
     return true;
   };
@@ -84,20 +93,26 @@ window.addEventListener('load', () => {
     return true;
   };
 
+  const ipFieldChangeHandler = (e) => {
+    console.log(e);
+  };
+
   router.add('/', async () => {
     // Display loader first
     let html = ipTemplate();
     el.html(html);
     try {
       $('.loading').removeClass('loading');
-      // Specify Form Validation Rules
-      // $('.ui.form').form({
-      //   fields: {
-      //     amount: 'text',
-      //   },
-      // });
-      // Specify Submit Handler
       $('.submit').click(getGeoByIpHandler);
+      $('.submit').addClass('disabledbutton');
+      $('.text-field').on('input',function(e){
+        if ($('.text-field').val()) {
+          $('.submit').removeClass('disabledbutton');
+        }
+        else {
+          $('.submit').addClass('disabledbutton');
+        }
+      });
     } catch (error) {
       showError(error);
     }
@@ -117,7 +132,7 @@ window.addEventListener('load', () => {
       //   },
       // });
       // Specify Submit Handler
-      $('.submit').click(getPlacesByCityHandler);
+      $('.submit').click(getPlacesByCityHandler).change;
     } catch (error) {
       showError(error);
     }
