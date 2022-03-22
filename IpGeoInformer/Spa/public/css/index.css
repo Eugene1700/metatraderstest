@@ -128,3 +128,17 @@ tbody td:hover:before {
     pointer-events: none;
     opacity: 0.4;
 }
+
+.title-error {
+    color: darkred;
+    font-weight: bold;
+}
+
+.content-error {
+    color: red;
+}
+
+.container-error {
+    color: indianred;
+    align-content: flex-start;
+}

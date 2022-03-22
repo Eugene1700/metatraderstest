@@ -1,113 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="scripts/semantic-ui-css/semantic.min.css">
-  <link rel="stylesheet" href="/css/index.css">
-  <title>GEO.IP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="scripts/semantic-ui-css/semantic.min.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>GEO.IP</title>
 </head>
 <body>
-  <div>
+<div>
     <!-- Navigation Menu -->
     <nav class="nav">
-      <div class="header">
-        GEO.IP
-      </div>
-      <a class="nav__link" href="/">
-        Поиск по IP
-      </a>
-      <a class="nav__link" href="/city">
-        Поиск по городу
-      </a>
+        <div class="header">
+            GEO.IP
+        </div>
+        <a class="nav__link" href="/">
+            Поиск по IP
+        </a>
+        <a class="nav__link" href="/city">
+            Поиск по городу
+        </a>
     </nav>
     <!-- Error Template -->
     <script id="error-template" type="text/x-handlebars-template">
-      <div class="ui {{color}} inverted segment" style="height:250px;">
-        <br>
-        <h2 class="ui center aligned icon header">
-          <i class="exclamation triangle icon"></i>
-          <div class="content">
-            {{title}}
-            <div class="sub header">{{message}}</div>
-          </div>
-        </h2>
-      </div>
+        <div class="container-error">
+            <div class="content-error">{{message}}</div>
+        </div>
     </script>
 
     <script id="location-template" type="text/x-handlebars-template">
-      <hr>
-      <div class="container">
-        <table class="tbl-location">
-          <thead>
-          <tr>
-            <th>Страна</th>
-            <th>Регион</th>
-            <th>Город</th>
-            <th>Организация</th>
-            <th>Почтовый индекс</th>
-            <th>Широта</th>
-            <th>Долгота</th>
-          </tr>
-          </thead>
-          <tbody>
-          {{#each locations}}
-            <tr>
-              <td>{{country}}</td>
-              <td>{{region}}</td>
-              <td>{{city}}</td>
-              <td>{{organization}}</td>
-              <td>{{postal}}</td>
-              <td>{{latitude}}</td>
-              <td>{{longitude}}</td>
-            </tr>
-          {{/each}}
-          </tbody>
-        </table>
-      </div>
+        <hr>
+        <div class="container">
+            <table class="tbl-location">
+                <thead>
+                <tr>
+                    <th>Страна</th>
+                    <th>Регион</th>
+                    <th>Город</th>
+                    <th>Организация</th>
+                    <th>Почтовый индекс</th>
+                    <th>Широта</th>
+                    <th>Долгота</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each locations}}
+                    <tr>
+                        <td>{{country}}</td>
+                        <td>{{region}}</td>
+                        <td>{{city}}</td>
+                        <td>{{organization}}</td>
+                        <td>{{postal}}</td>
+                        <td>{{latitude}}</td>
+                        <td>{{longitude}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
     </script>
 
     <script id="ip-template" type="text/x-handlebars-template">
-      <h1 class="ui header">Поиск гео-позиции по IP</h1>
-      <hr>
-      <div class="ui basic segment">
-        <form class="ui form">
-            <div class="field">
-              <label>IP-адрес</label>
-              <div class="form-container">
-                <input type="text" class="text-field" name="ip" id="ip" placeholder="Введите ip-адрес">
-                <div class="submit button-my">Искать</div>
-              </div>
+        <h1>Поиск гео-позиции по IP</h1>
+        <hr>
+        <div>
+            <form class="ui form">
+                <div class="field">
+                    <label>IP-адрес</label>
+                    <div class="form-container">
+                        <input type="text" class="text-field" name="ip" id="ip" placeholder="Введите ip-адрес">
+                        <div class="submit button-my">Искать</div>
+                    </div>
+                </div>
+            </form>
+            <br>
+            <div id="result-segment">
+                <hr>
+                <div id="result"/>
             </div>
-<!--          <div class="ui error message"></div>-->
-        </form>
-        <br>
-        <div id="result-segment" class="ui center aligned segment">
-          <div id="result" class="ui"/>
         </div>
-      </div>
     </script>
 
     <script id="city-template" type="text/x-handlebars-template">
-      <h1 class="ui header">Поиск местоположения по названию города</h1>
-      <hr>
-      <div class="ui basic loading segment">
-        <form class="ui form">
-          <div class="three fields">
-            <div class="field">
-              <label>Название города</label>
-              <input type="text" name="city" id="city" placeholder="Введите название города">
+        <h1>Поиск местоположения по названию города</h1>
+        <hr>
+        <div>
+            <form class="ui form">
+                <div class="field">
+                    <label>Название города</label>
+                    <div class="form-container">
+                        <input type="text" class="text-field" name="city" id="city" placeholder="Введите название города">
+                        <div class="submit button-my">Искать</div>
+                    </div>
+                </div>
+
+            </form>
+            <br>
+            <div id="result-segment">
+                <div id="result"/>
             </div>
-          </div>
-          <div class="submit button-my">Искать</div>
-          <div class="ui error message"></div>
-        </form>
-        <br>
-        <div id="result-segment" class="ui center aligned segment">
-          <div id="result" class="ui header"/>
         </div>
-      </div>
     </script>
 
     <!-- Page content -->
@@ -120,6 +113,6 @@
     <script src="scripts/handlebars/dist/handlebars.min.js"></script>
     <script src="scripts/vanilla-router/dist/vanilla-router.min.js"></script>
     <script src="js/app.js"></script>
-  </div>
+</div>
 </body>
 </html>

@@ -1,13 +1,11 @@
 window.addEventListener('load', () => {
   const el = $('#app');
 
-  // Compile Handlebar Templates
   const errorTemplate = Handlebars.compile($('#error-template').html());
   const ipTemplate = Handlebars.compile($('#ip-template').html());
   const locationTemplate = Handlebars.compile($('#location-template').html());
   const cityTemplate = Handlebars.compile($('#city-template').html());
 
-  // Instantiate api handler
   const api = axios.create({
     baseURL: 'http://localhost:5000/',
     timeout: 5000,
@@ -25,7 +23,6 @@ window.addEventListener('load', () => {
     },
   });
 
-  // Display Error Banner
   const showError = (error) => {
     const { title, message } = error.response.data;
     const html = errorTemplate({ color: 'red', title, message });
@@ -37,11 +34,11 @@ window.addEventListener('load', () => {
     try {
       const response = await api.get(`/ip/location?ip=${ip}`);
       const { latitude, longitude } = response.data;
-      $('#result').html(`Широта: ${latitude} Долгота: ${longitude}`);
+      $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
+      window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: latitude, longitude: longitude}));
     } catch (error) {
       showError(error);
     } finally {
-      $('#result-segment').removeClass('loading');
     }
   };
 
@@ -49,12 +46,19 @@ window.addEventListener('load', () => {
     const city = $('#city').val();
     try {
       const response = await api.get(`/city/locations?city=${city}`);
-      const template = locationTemplate({locations: response.data});
-      $('#result').html(template);
+      const locations = response.data;
+      if (locations && locations.length > 0) {
+        const template = locationTemplate({locations: locations});
+        $('#result').html(template);
+        window.localStorage.setItem('city-result', JSON.stringify({city: city, locations: locations}));
+      }
+      else {
+        $('#result').html("Локации не найдены");
+      }
+
     } catch (error) {
       showError(error);
     } finally {
-      $('#result-segment').removeClass('loading');
     }
   };
 
@@ -70,41 +74,38 @@ window.addEventListener('load', () => {
   const getGeoByIpHandler = () => {
     const ip = $('#ip').val();
     if (validateIpAddress(ip)) {
-      $('#result-segment').addClass('loading');
       getGeoIpResults();
       return false;
     }
     else {
-      alert('incorrect ip');
+      let r = errorTemplate({ message: "Некорректный ip-адрес"});
+      $('#result').html(r);
     }
     return true;
   };
 
   const getPlacesByCityHandler = () => {
-    if ($('.ui.form').form('is valid')) {
-      // hide error message
-      $('.ui.error.message').hide();
-      // Post to express server
-      $('#result-segment').addClass('loading');
-      getPlacesByCityResults();
-      // Prevent page from submitting to server
-      return false;
-    }
+    getPlacesByCityResults();
     return true;
   };
 
-  const ipFieldChangeHandler = (e) => {
-    console.log(e);
-  };
-
   router.add('/', async () => {
-    // Display loader first
     let html = ipTemplate();
     el.html(html);
     try {
-      $('.loading').removeClass('loading');
+      const r = JSON.parse(window.localStorage.getItem('ip-result'));
+      if (r) {
+        const {ip, latitude, longitude} = r;
+        const ipFiled = $('#ip');
+        ipFiled.val(ip);
+        $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
+        $('.submit').removeClass('disabledbutton');
+      }
+      else {
+        $('.submit').addClass('disabledbutton');
+      }
+
       $('.submit').click(getGeoByIpHandler);
-      $('.submit').addClass('disabledbutton');
       $('.text-field').on('input',function(e){
         if ($('.text-field').val()) {
           $('.submit').removeClass('disabledbutton');
@@ -119,20 +120,36 @@ window.addEventListener('load', () => {
   });
 
   router.add('/city', async () => {
-    // Display loader first
     let html = cityTemplate();
     el.html(html);
     try {
+      const r = JSON.parse(window.localStorage.getItem('city-result'));
+      if (r) {
+        const {city, locations} = r;
+        const cityField = $('#city');
+        cityField.val(city);
+        if (locations && locations.length > 0) {
+          const template = locationTemplate({locations: locations});
+          $('#result').html(template);
+        }
+        else {
+          $('#result').html("Локации не найдены");
+        }
+        $('.submit').removeClass('disabledbutton');
+      }
+      else {
+        $('.submit').addClass('disabledbutton');
+      }
 
-      $('.loading').removeClass('loading');
-      // Specify Form Validation Rules
-      // $('.ui.form').form({
-      //   fields: {
-      //     amount: 'text',
-      //   },
-      // });
-      // Specify Submit Handler
-      $('.submit').click(getPlacesByCityHandler).change;
+      $('.submit').click(getPlacesByCityHandler);
+      $('.text-field').on('input',function(e){
+        if ($('.text-field').val()) {
+          $('.submit').removeClass('disabledbutton');
+        }
+        else {
+          $('.submit').addClass('disabledbutton');
+        }
+      });
     } catch (error) {
       showError(error);
     }
