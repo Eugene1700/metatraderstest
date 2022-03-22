@@ -1,19 +1,18 @@
 ﻿using IpGeoInformer.Domain;
 using IpGeoInformer.FileStorageDal.Entities;
-using IpGeoInformer.Services.Comparers;
 
 namespace IpGeoInformer.FileStorageDal.Services.Comparers
 {
-    public class IpIntervalsComparer : IShinyComparer<uint, IpIntervalStruct>
+    public class IpIntervalsComparer : IKeyComparer<uint, IpIntervalStruct>
     {
-        public int Compare(uint x, IpIntervalStruct y)
+        public int Compare(uint key, IpIntervalStruct y)
         {
-            if (y.IpFrom <= x && y.IpTo >= x)
+            if (y.IpFrom <= key && y.IpTo >= key)
             {
                 return 0;
             }
 
-            if (y.IpFrom > x)
+            if (y.IpFrom > key)
                 return -1;
 
             return 1;

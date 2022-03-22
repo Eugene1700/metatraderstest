@@ -1,14 +1,16 @@
-﻿using IpGeoInformer.Domain;
-using IpGeoInformer.FileStorageDal.Entities;
-using IpGeoInformer.Services.Comparers;
+﻿using IpGeoInformer.FileStorageDal.Entities;
 
 namespace IpGeoInformer.FileStorageDal.Services.Comparers
 {
-    public class CityComparer : IShinyComparer<string, PlaceStruct>
+    /// <summary>
+    /// Сравнение для названий городов
+    /// </summary>
+    public class CityComparer : IKeyComparer<string, LocationStruct>
     {
-        public int Compare(string x, PlaceStruct y)
+        /// <inheritdoc />
+        public int Compare(string key, LocationStruct y)
         {
-            return x.CompareTo(y.City);
+            return key.CompareTo(y.City);
         }
     }
 }

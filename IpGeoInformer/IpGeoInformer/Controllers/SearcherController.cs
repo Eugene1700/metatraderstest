@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net;
-using IpGeoInformer.Domain;
 using IpGeoInformer.Domain.Model;
 using IpGeoInformer.Domain.Services;
 using IpGeoInformer.Helpers;
 using IpGeoInformer.Models;
-using IpGeoInformer.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -25,17 +21,17 @@ namespace IpGeoInformer.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Получить координаты по ip
+        /// </summary>
+        /// <param name="ip">IP-адрес</param>
+        /// <returns>Координаты</returns>
         [HttpGet]
         [Route("ip/location")]
         public Coordinates GetLocation([FromQuery] string ip)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             var uintIp = ip.StrIpToUInt();
-            var place = _geoIpSearcher.SearchPlaceByIp(uintIp);
-            stopwatch.Stop();
-            var stopwatchElapsed = stopwatch.Elapsed;
-            _logger.LogInformation($"searchTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
+            var place = _geoIpSearcher.SearchLocationByIp(uintIp);
             if (place == null)
                 return null;
             return new Coordinates
@@ -45,17 +41,16 @@ namespace IpGeoInformer.Controllers
             };
         }
         
+        /// <summary>
+        /// Найти локации по названию городу
+        /// </summary>
+        /// <param name="city">Название города</param>
+        /// <returns>Локации</returns>
         [HttpGet]
         [Route("city/locations")]
-        public Place[] GetLocations([FromQuery] string city)
+        public Location[] GetLocations([FromQuery] string city)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var res = _geoIpSearcher.SearchPlacesByCity(city);
-            stopwatch.Stop();
-            var stopwatchElapsed = stopwatch.Elapsed;
-            _logger.LogInformation($"searchTime={Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms");
-            return res;
+            return _geoIpSearcher.SearchLocationsByCity(city);
         }
     }
 }

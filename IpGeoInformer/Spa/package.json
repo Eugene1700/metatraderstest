@@ -13,8 +13,9 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "handlebars": "^4.0.11",
+    "inputmask": "^5.0.7",
     "jquery": "^3.3.1",
-    "semantic-ui-css": "^2.3.1",
+    "jquery-mask-plugin": "^1.14.16",
     "vanilla-router": "^1.2.6"
   }
 }

@@ -1,6 +1,5 @@
 ﻿using IpGeoInformer.Domain.Services;
 using IpGeoInformer.FileStorageDal.Services;
-using IpGeoInformer.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IpGeoInformer.FileStorageDal

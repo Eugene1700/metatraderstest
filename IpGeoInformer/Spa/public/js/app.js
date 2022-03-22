@@ -33,9 +33,15 @@ window.addEventListener('load', () => {
     const ip = $('#ip').val();
     try {
       const response = await api.get(`/ip/location?ip=${ip}`);
-      const { latitude, longitude } = response.data;
-      $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
-      window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: latitude, longitude: longitude}));
+      if (response.data) {
+        const {latitude, longitude} = response.data;
+        $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
+        window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: latitude, longitude: longitude}));
+      }
+      else {
+        $('#result').html(`Локации не найдены`);
+        window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: null, longitude: null}));
+      }
     } catch (error) {
       showError(error);
     } finally {
@@ -54,6 +60,7 @@ window.addEventListener('load', () => {
       }
       else {
         $('#result').html("Локации не найдены");
+        window.localStorage.setItem('city-result', JSON.stringify({city: city, locations: []}));
       }
 
     } catch (error) {
@@ -98,7 +105,11 @@ window.addEventListener('load', () => {
         const {ip, latitude, longitude} = r;
         const ipFiled = $('#ip');
         ipFiled.val(ip);
-        $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
+        if (!latitude || !longitude) {
+          $('#result').html(`Локации не найдены`);
+        } else {
+          $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
+        }
         $('.submit').removeClass('disabledbutton');
       }
       else {
@@ -106,6 +117,7 @@ window.addEventListener('load', () => {
       }
 
       $('.submit').click(getGeoByIpHandler);
+
       $('.text-field').on('input',function(e){
         if ($('.text-field').val()) {
           $('.submit').removeClass('disabledbutton');
@@ -114,6 +126,8 @@ window.addEventListener('load', () => {
           $('.submit').addClass('disabledbutton');
         }
       });
+
+      $('.text-field').inputmask("999.999.999.999");
     } catch (error) {
       showError(error);
     }

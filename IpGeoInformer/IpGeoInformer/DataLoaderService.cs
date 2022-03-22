@@ -10,7 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace IpGeoInformer
 {
-    
+    /// <summary>
+    /// Сервис для загрузки данных в память
+    /// </summary>
     public class DataLoaderService : IHostedService
     {
         private readonly ILogger<DataLoaderService> _logger;
@@ -32,10 +34,12 @@ namespace IpGeoInformer
             var dataLoader = scope.ServiceProvider.GetRequiredService<IGeoIpDataLoader>();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
+            
             dataLoader.Load(filePath);
+            
             stopwatch.Stop();
             var stopwatchElapsed = stopwatch.Elapsed;
-            _logger.LogInformation($"dbloading time=[{Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms]");
+            _logger.LogInformation($"db loading time=[{Convert.ToInt32(stopwatchElapsed.TotalMilliseconds)} ms]");
             return Task.CompletedTask;
         }
 

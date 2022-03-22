@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using IpGeoInformer.Services.Comparers;
+using IpGeoInformer.FileStorageDal.Services.Comparers;
 
 namespace IpGeoInformer.FileStorageDal.Helpers
 {
     public static class ArrayExtensions
     {
+        /// <summary>
+        /// Выделить структуру из массива байт
+        /// </summary>
+        /// <param name="inputArray">Массив</param>
+        /// <param name="index">Индекс в исходном массиве</param>
+        /// <typeparam name="T">Тип структуры</typeparam>
+        /// <returns>Структура</returns>
         public static T ToStruct<T>(this byte[] inputArray, int index) where T : struct
         {
             var size = Marshal.SizeOf<T>();
@@ -14,11 +21,22 @@ namespace IpGeoInformer.FileStorageDal.Helpers
             return @struct;
         }
 
+        /// <summary>
+        /// Бинарный поиск по байтовому массиву
+        /// </summary>
+        /// <param name="inputArray">Массив</param>
+        /// <param name="key">Ключ для поиска</param>
+        /// <param name="itemSize">Размер структуры в массиве</param>
+        /// <param name="toStruct">Метод для овеществления структуры</param>
+        /// <param name="comparator">Компаратор</param>
+        /// <typeparam name="TSearchKey">Тип ключа для поиска</typeparam>
+        /// <typeparam name="TSearchStruct">Тип структуры</typeparam>
+        /// <returns>Результат: индекс и искомый объект или null</returns>
         public static SearchResult<TSearchStruct> BinarySearch<TSearchKey, TSearchStruct>(this byte[] inputArray,
             TSearchKey key,
             int itemSize,
             Func<int, TSearchStruct> toStruct,
-            IShinyComparer<TSearchKey, TSearchStruct> comparator) where TSearchStruct : struct
+            IKeyComparer<TSearchKey, TSearchStruct> comparator) where TSearchStruct : struct
         {
             var min = 0;
             var max = inputArray.Length / itemSize - 1;
@@ -49,12 +67,26 @@ namespace IpGeoInformer.FileStorageDal.Helpers
             return null;
         }
 
+        /// <summary>
+        /// выделить подмассив
+        /// </summary>
+        /// <param name="array">Массив</param>
+        /// <param name="offset">Сдвиг относительно начала</param>
+        /// <param name="length">Размер подмассива</param>
+        /// <typeparam name="T">Тип массива</typeparam>
+        /// <returns>Подмассив</returns>
         private static T[] SubArray<T>(this T[] array, int offset, int length)
         {
             return new ArraySegment<T>(array, offset, length)
                 .ToArray();
         }
 
+        /// <summary>
+        /// Преобразовать массив байт в структуру
+        /// </summary>
+        /// <param name="bytes">Массив</param>
+        /// <typeparam name="T">Тип структуры</typeparam>
+        /// <returns>Структура</returns>
         private static T ByteArrayToStruct<T>(this byte[] bytes)
         {
             var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
@@ -70,11 +102,27 @@ namespace IpGeoInformer.FileStorageDal.Helpers
         }
     }
 
+    /// <summary>
+    /// Результат поиска объекта
+    /// </summary>
+    /// <typeparam name="T">Тип объекта</typeparam>
     public class SearchResult<T>
     {
+        /// <summary>
+        /// Искомый объект
+        /// </summary>
         public T Result { get; set; }
+        
+        /// <summary>
+        /// Индекс в массиве
+        /// </summary>
         public int Index { get; set; }
 
+        /// <summary>
+        /// Деконструктор
+        /// </summary>
+        /// <param name="result">Объект</param>
+        /// <param name="index">Индекс</param>
         public void Deconstruct(out T result, out int index)
         {
             result = Result;

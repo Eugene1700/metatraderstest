@@ -26,12 +26,12 @@ namespace IpGeoInformer.FileStorageDal.Services
             
             var records = header.Records;
             var intervals = binaryReader.ReadBytes(GeoIpDataBaseDescriptor.IntervalsSize * records);
-            var places = binaryReader.ReadBytes(GeoIpDataBaseDescriptor.PlaceSize * records);
+            var places = binaryReader.ReadBytes(GeoIpDataBaseDescriptor.LocationSize * records);
             var indexes = binaryReader.ReadBytes(GeoIpDataBaseDescriptor.IndexSize * records);
             
             _memoryCache.Set(GeoIpDataBaseDescriptor.HeaderKey, header);
             _memoryCache.Set(GeoIpDataBaseDescriptor.IntervalsKey, intervals);
-            _memoryCache.Set(GeoIpDataBaseDescriptor.PlacesKey, places);
+            _memoryCache.Set(GeoIpDataBaseDescriptor.LocationsKey, places);
             _memoryCache.Set(GeoIpDataBaseDescriptor.IndexesKey, indexes);
         }
     }

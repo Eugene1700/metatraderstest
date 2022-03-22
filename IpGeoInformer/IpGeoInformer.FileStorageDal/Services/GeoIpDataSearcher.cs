@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using IpGeoInformer.Domain;
 using IpGeoInformer.Domain.Model;
 using IpGeoInformer.Domain.Services;
 using IpGeoInformer.FileStorageDal.Entities;
 using IpGeoInformer.FileStorageDal.Helpers;
 using IpGeoInformer.FileStorageDal.Services.Comparers;
-using IpGeoInformer.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -30,114 +27,95 @@ namespace IpGeoInformer.FileStorageDal.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// IP-интервалы
+        /// </summary>
         private byte[] Intervals => _intervals ??= _memoryCache.Get<byte[]>(GeoIpDataBaseDescriptor.IntervalsKey);
-        private byte[] Places => _places ??= _memoryCache.Get<byte[]>(GeoIpDataBaseDescriptor.PlacesKey);
+        /// <summary>
+        /// Локации
+        /// </summary>
+        private byte[] Locations => _places ??= _memoryCache.Get<byte[]>(GeoIpDataBaseDescriptor.LocationsKey);
+        /// <summary>
+        /// Заголовок
+        /// </summary>
         private HeaderStruct HeaderStruct => _header ??= _memoryCache.Get<HeaderStruct>(GeoIpDataBaseDescriptor.HeaderKey);
+        /// <summary>
+        /// Индексы
+        /// </summary>
         private byte[] Indexes => _indexes ??= _memoryCache.Get<byte[]>(GeoIpDataBaseDescriptor.IndexesKey);
-
-        public Place SearchPlaceByIp(uint ip)
+        
+        /// <inheritdoc />
+        public Location SearchLocationByIp(uint ip)
         {
-            // var intIp = StrIpToUInt(ip);
             IpIntervalStruct ToStruct(int mid) => Intervals.ToStruct<IpIntervalStruct>(mid * GeoIpDataBaseDescriptor.IntervalsSize);
             var result = Intervals.BinarySearch(ip, GeoIpDataBaseDescriptor.IntervalsSize, ToStruct,
                 new IpIntervalsComparer());
             if (result == null)
                 return null;
             var (interval, _) = result;
-            var place = GetPlaceByIndex((int) interval.LocationIndex);
-            return ToPlaceDto(place);
+            var place = GetLocationByIndex((int) interval.LocationIndex);
+            return ToLocation(place);
         }
 
-        private static Place ToPlaceDto(PlaceStruct placeStruct)
+        /// <inheritdoc />
+        public Location[] SearchLocationsByCity(string city)
         {
-            return new Place
-            {
-                Country = placeStruct.Country,
-                City = placeStruct.City,
-                Latitude = placeStruct.Latitude,
-                Longitude = placeStruct.Longitude,
-                Organization = placeStruct.Organization,
-                Postal = placeStruct.Postal,
-                Region = placeStruct.Region
-            };
-        }
-
-        public Place[] SearchPlacesByCity(string city)
-        {
-            PlaceStruct ToStruct(int mid) => GetPlaceByIndex(mid);
-            var searchResult = Indexes.BinarySearch(city, GeoIpDataBaseDescriptor.IndexSize, 
-                ToStruct, new CityComparer());
+            var cityComparer = new CityComparer();
+            //Поиск проводим по индексу, а сравниваем из локаций
+            var searchResult = Indexes.BinarySearch(city, GeoIpDataBaseDescriptor.IndexSize,
+                GetLocationByIndex, cityComparer);
             if (searchResult == null)
-                return new Place[0];
+                return new Location[0];
             var (place, index) = searchResult;
-            var res = new List<PlaceStruct> {place};
+            var res = new List<LocationStruct> {place};
+            //нашли какую-то локацию, теперь надо пробежаться вперед и назад и получить полный список для города
+            bool CompareAndAddToRes(int inc)
+            {
+                var s = GetLocationByIndex(inc);
+                if (cityComparer.Compare(city, s) != 0) return false;
+                res.Add(s);
+                return true;
+            }
 
             var i = index - 1;
             while (true)
             {
-                var s = GetPlaceByIndex(i);
-                if (s.City == city)
-                {
-                    res.Add(s);
-                }
-                else
-                {
-                    break;
-                }
-
-                --i;
+                if (!CompareAndAddToRes(i--)) break;
             }
 
             i = index + 1;
             while (true)
             {
-                var s = GetPlaceByIndex(i);
-                if (s.City == city)
-                {
-                    res.Add(s);
-                }
-                else
-                {
-                    break;
-                }
-
-                ++i;
+                if (!CompareAndAddToRes(i++)) break;
             }
 
-            return res.Select(ToPlaceDto).ToArray();
+            return res.Select(ToLocation).ToArray();
         }
 
-        public IpIntervalStruct[] GetAllIntervals()
-        {
-            using var stream = new MemoryStream(Intervals);
-            using var binaryReader = new BinaryReader(stream);
-            var intervals = new IpIntervalStruct[HeaderStruct.Records];
-            for (var i = 0; i < HeaderStruct.Records; i++)
-            {
-                intervals[i] = Intervals.ToStruct<IpIntervalStruct>(i * GeoIpDataBaseDescriptor.IntervalsSize);
-            }
-
-            return intervals;
-        }
-
-        public PlaceStruct[] GetAllPlaces()
-        {
-            using var stream = new MemoryStream(Places);
-            using var binaryReader = new BinaryReader(stream);
-            var places = new PlaceStruct[HeaderStruct.Records];
-            for (var i = 0; i < HeaderStruct.Records; i++)
-            {
-                places[i] = Places.ToStruct<PlaceStruct>(i * GeoIpDataBaseDescriptor.PlaceSize);
-            }
-
-            return places;
-        }
-        
-        private PlaceStruct GetPlaceByIndex(int index)
+        /// <summary>
+        /// Получить локацию по индексу
+        /// </summary>
+        /// <param name="index">Индекс без учета размера элемента</param>
+        /// <returns>Локация</returns>
+        private LocationStruct GetLocationByIndex(int index)
         {
             var locationIndex = Indexes.ToStruct<int>(index * GeoIpDataBaseDescriptor.IndexSize);
-            var place = Places.ToStruct<PlaceStruct>(locationIndex);
+            var place = Locations.ToStruct<LocationStruct>(locationIndex);
             return place;
+        }
+        
+        private static Location ToLocation(LocationStruct locationStruct)
+        {
+            return new Location
+            {
+                Country = locationStruct.Country,
+                City = locationStruct.City,
+                Latitude = locationStruct.Latitude,
+                Longitude = locationStruct.Longitude,
+                Organization = locationStruct.Organization,
+                Postal = locationStruct.Postal,
+                Region = locationStruct.Region
+            };
         }
     }
 }
