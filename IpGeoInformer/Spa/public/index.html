@@ -9,19 +9,11 @@
 </head>
 <body>
 <div>
-    <!-- Navigation Menu -->
     <nav class="nav">
-        <div class="header">
-            GEO.IP
-        </div>
-        <a class="nav__link" href="/">
-            Поиск по IP
-        </a>
-        <a class="nav__link" href="/city">
-            Поиск по городу
-        </a>
+        <div class="header">GEO.IP</div>
+        <a class="nav__link" href="/">Поиск по IP</a>
+        <a class="nav__link" href="/city">Поиск по городу</a>
     </nav>
-    <!-- Error Template -->
     <script id="error-template" type="text/x-handlebars-template">
         <div class="container-error">
             <div class="content-error">{{message}}</div>
@@ -64,18 +56,18 @@
         <hr>
         <div>
             <form>
-                <div class="field">
+                <div class="field ip-search-container">
                     <label>IP-адрес</label>
                     <div class="form-container">
-                        <input type="text" class="text-field" name="ip" id="ip" placeholder="Введите ip-адрес">
-                        <div class="submit button-my">Искать</div>
+                        <input type="text" class="text-field ip-input" name="ip" id="ip" placeholder="Введите ip-адрес">
+                        <div class="submit button-my ip-location-search">Искать</input>
                     </div>
                 </div>
             </form>
             <br>
             <div id="result-segment">
                 <hr>
-                <div id="result"/>
+                <div id="result" class="ip-search-result"/>
             </div>
         </div>
     </script>
@@ -88,8 +80,8 @@
                 <div class="field">
                     <label>Название города</label>
                     <div class="form-container">
-                        <input type="text" class="text-field" name="city" id="city" placeholder="Введите название города">
-                        <div class="submit button-my">Искать</div>
+                        <input type="text" class="text-field city-search-input" name="city" id="city" placeholder="Введите название города">
+                        <div class="submit button-my city-search-submit">Искать</div>
                     </div>
                 </div>
 
@@ -97,7 +89,7 @@
             <br>
             <div id="result-segment">
                 <hr>
-                <div id="result"/>
+                <div id="result" class="city-search-result"/>
             </div>
         </div>
     </script>
