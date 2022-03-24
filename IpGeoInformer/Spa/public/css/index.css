@@ -86,7 +86,7 @@ tbody td:hover:before {
     z-index: -1;
 }
 
-.button-my {
+.button-search {
     cursor: pointer;
     display: inline-block;
     min-height: 1em;
@@ -150,4 +150,8 @@ tbody td:hover:before {
 .container-error {
     color: indianred;
     align-content: flex-start;
+}
+
+.active {
+    background-color: rgba(255, 255, 255, 0.2);
 }

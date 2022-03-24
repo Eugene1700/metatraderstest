@@ -23,79 +23,6 @@ window.addEventListener('load', () => {
     },
   });
 
-  const showError = (error) => {
-    const { title, message } = error.response.data;
-    const html = errorTemplate({ color: 'red', title, message });
-    el.html(html);
-  };
-
-  const getGeoIpResults = async () => {
-    const ip = $('#ip').val();
-    try {
-      const response = await api.get(`/ip/location?ip=${ip}`);
-      if (response.data) {
-        const {latitude, longitude} = response.data;
-        $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
-        window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: latitude, longitude: longitude}));
-      }
-      else {
-        $('#result').html(`Локации не найдены`);
-        window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: null, longitude: null}));
-      }
-    } catch (error) {
-      showError(error);
-    } finally {
-    }
-  };
-
-  const getPlacesByCityResults = async () => {
-    const city = $('#city').val();
-    try {
-      const response = await api.get(`/city/locations?city=${city}`);
-      const locations = response.data;
-      if (locations && locations.length > 0) {
-        const template = locationTemplate({locations: locations});
-        $('#result').html(template);
-        window.localStorage.setItem('city-result', JSON.stringify({city: city, locations: locations}));
-      }
-      else {
-        $('#result').html("Локации не найдены");
-        window.localStorage.setItem('city-result', JSON.stringify({city: city, locations: []}));
-      }
-
-    } catch (error) {
-      showError(error);
-    } finally {
-    }
-  };
-
-  function validateIpAddress(ipaddress)
-  {
-    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress))
-    {
-      return true;
-    }
-    return false;
-  }
-
-  const getGeoByIpHandler = () => {
-    const ip = $('#ip').val();
-    if (validateIpAddress(ip)) {
-      getGeoIpResults();
-      return false;
-    }
-    else {
-      let r = errorTemplate({ message: "Некорректный ip-адрес"});
-      $('#result').html(r);
-    }
-    return true;
-  };
-
-  const getPlacesByCityHandler = () => {
-    getPlacesByCityResults();
-    return true;
-  };
-
   router.add('/', async () => {
     let html = ipTemplate();
     el.html(html);
@@ -168,6 +95,79 @@ window.addEventListener('load', () => {
       showError(error);
     }
   });
+
+  const showError = (error) => {
+    const { title, message } = error.response.data;
+    const html = errorTemplate({ color: 'red', title, message });
+    el.html(html);
+  };
+
+  const getGeoIpResults = async () => {
+    const ip = $('#ip').val();
+    try {
+      const response = await api.get(`/ip/location?ip=${ip}`);
+      if (response.data) {
+        const {latitude, longitude} = response.data;
+        $('#result').html(`Широта: ${latitude}<br>Долгота: ${longitude}`);
+        window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: latitude, longitude: longitude}));
+      }
+      else {
+        $('#result').html(`Локации не найдены`);
+        window.localStorage.setItem('ip-result', JSON.stringify({ip: ip, latitude: null, longitude: null}));
+      }
+    } catch (error) {
+      showError(error);
+    } finally {
+    }
+  };
+
+  const getPlacesByCityResults = async () => {
+    const city = $('#city').val();
+    try {
+      const response = await api.get(`/city/locations?city=${city}`);
+      const locations = response.data;
+      if (locations && locations.length > 0) {
+        const template = locationTemplate({locations: locations});
+        $('#result').html(template);
+        window.localStorage.setItem('city-result', JSON.stringify({city: city, locations: locations}));
+      }
+      else {
+        $('#result').html("Локации не найдены");
+        window.localStorage.setItem('city-result', JSON.stringify({city: city, locations: []}));
+      }
+
+    } catch (error) {
+      showError(error);
+    } finally {
+    }
+  };
+
+  function validateIpAddress(ipaddress)
+  {
+    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress))
+    {
+      return true;
+    }
+    return false;
+  }
+
+  const getGeoByIpHandler = () => {
+    const ip = $('#ip').val();
+    if (validateIpAddress(ip)) {
+      getGeoIpResults();
+      return false;
+    }
+    else {
+      let r = errorTemplate({ message: "Некорректный ip-адрес"});
+      $('#result').html(r);
+    }
+    return true;
+  };
+
+  const getPlacesByCityHandler = () => {
+    getPlacesByCityResults();
+    return true;
+  };
 
   router.navigateTo(window.location.pathname);
 

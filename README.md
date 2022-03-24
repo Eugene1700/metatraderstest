@@ -1,7 +1,8 @@
 # metatraderstest
 
 Server
-Run IpGeoInformer.WebApi
+set path to database file in appsettings.js
+run IpGeoInformer.WebApi
 
 Client
 npm install
