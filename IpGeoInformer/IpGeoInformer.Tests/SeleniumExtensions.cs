@@ -121,10 +121,16 @@ namespace IpGeoInformer.Tests
             }
         }
 
-        public static void WaitText(this IWebDriver driver, By by, string text)
+        public static void WaitValue(this IWebElement element, string text)
         {
-            Waiter.Wait(() => driver.FindElement(by).Text == text,
-                (i) => Assert.Fail($"Текст [{text}] не найден для элемента [{driver.FindElement(by).GetAttribute("class")}], был [{driver.FindElement(by).Text}]"));
+            Waiter.Wait(() => element.GetAttribute("value")== text,
+                (i) => Assert.Fail($"Текст [{text}] не найден для элемента [{element.GetAttribute("class")}], был [{element.GetAttribute("value")}]"));
+        }
+        
+        public static void WaitText(this IWebElement element, string text)
+        {
+            Waiter.Wait(() => element.Text== text,
+                (i) => Assert.Fail($"Текст [{text}] не найден для элемента [{element.GetAttribute("class")}], был [{element.Text}]"));
         }
     }
 }
