@@ -22,7 +22,7 @@ namespace IpGeoInformer
             
             services.AddOpenApiDocument(settings =>
             {
-                settings.Title = "IpGeoInformer";
+                settings.Title = "IpGeoInformer.WebApi";
             });
         }
 

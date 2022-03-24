@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer", "IpGeoInformer\IpGeoInformer.csproj", "{7AA07B26-75BD-4BC0-84F2-0D706A662A5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer.WebApi", "IpGeoInformer.WebApi\IpGeoInformer.WebApi.csproj", "{7AA07B26-75BD-4BC0-84F2-0D706A662A5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpGeoInformer.Tests", "IpGeoInformer.Tests\IpGeoInformer.Tests.csproj", "{CD8C3DBC-BE09-4E0D-81E7-D6789659D3C5}"
 EndProject

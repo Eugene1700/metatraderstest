@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\IpGeoInformer\IpGeoInformer.csproj" />
+      <ProjectReference Include="..\IpGeoInformer.WebApi\IpGeoInformer.WebApi.csproj" />
     </ItemGroup>
 
 </Project>
