@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using IpGeoInformer.Domain.Model;
+﻿using IpGeoInformer.Domain.Model;
 using IpGeoInformer.Domain.Services;
 using IpGeoInformer.Helpers;
 using IpGeoInformer.Models;
